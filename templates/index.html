@@ -1,0 +1,57 @@
+<html>
+    <head>
+        <title>WEBSOCKETS CHIDOS</title>
+    </head>
+    <body>
+        <h1>UNOS WEBSOCKETS CHIDOS AQUI</h1>
+
+        <div id="mensajes">
+            Historial de mensajes: <br />
+        </div>
+        <br />
+        <br />
+        <form id="form">
+            <label for="text">Mensaje:</label>
+            <input type="text" id="text" />
+        </form>
+        <script>
+            const escribirMensaje = (mensaje) => {
+
+                // DOM - Document Object Model
+                // árbol de objetos que definen una interfaz en web
+                document.getElementById('mensajes').innerHTML += mensaje + "<br />";
+            }
+
+            // location.host
+            // - ip actual de la computadora donde se corre el programa
+            // este ejemplo sólo va a servir si lo corren en la misma compu
+            // donde tienen el server 
+            const socket = new WebSocket('ws://' + location.host + '/echo');
+
+            // evento de recepcion de mensajes
+            socket.addEventListener('message', e => {
+                escribirMensaje("ECHO: " + e.data);
+            });
+
+            // evento de envío de mensajes
+            document.getElementById('form').onsubmit = e => {
+
+                // evitar envío de formulario a target
+                e.preventDefault();
+
+                // obtener datos
+                const texto = document.getElementById('text');
+
+                // mostrar en bitácora de envío de mensajes
+                escribirMensaje("ENVIANDO: " + texto.value);
+
+                // enviar mensajes
+                socket.send(texto.value);
+
+                // limpiar text field 
+                texto.value = '';
+            };
+
+        </script>
+    </body>
+</html>
